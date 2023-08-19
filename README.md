@@ -129,7 +129,7 @@ We encourage you to explore Decompose's features further and try adding them int
 
 * [Add basic navigation with child stack(s) to your project](https://arkivanov.github.io/Decompose/navigation/stack/overview/)
 * [Add child slots for loading one child at a time, or none](https://arkivanov.github.io/Decompose/navigation/slot/overview/)
-* [Add back button handlers for intercepting back button presses](https://arkivanov.github.io/Decompose/component/back-button/)
+* [Add back button handlers for intercepting back button presses](https://arkivanov.github.io/Decompose/component/back-button/)([diff](https://github.com/malliaridis/decompose-multiplatform-template/compare/initial-proposal...malliaridis:decompose-multiplatform-template:integration/dummy-backhandler))
 
 You can also have a look at various integrations, including:
 * [State preservation with Essenty and Parcelize]() _(not available yet)_
