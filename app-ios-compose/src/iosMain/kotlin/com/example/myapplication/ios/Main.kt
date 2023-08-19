@@ -1,9 +1,21 @@
-@file:OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
+@file:OptIn(ExperimentalForeignApi::class, BetaInteropApi::class, ExperimentalDecomposeApi::class)
 
 package com.example.myapplication.ios
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.ComposeUIViewController
 import com.arkivanov.decompose.DefaultComponentContext
+import com.arkivanov.decompose.ExperimentalDecomposeApi
+import com.arkivanov.decompose.extensions.compose.jetbrains.PredictiveBackGestureIcon
+import com.arkivanov.decompose.extensions.compose.jetbrains.PredictiveBackGestureOverlay
+import com.arkivanov.essenty.backhandler.BackDispatcher
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.destroy
 import com.arkivanov.essenty.lifecycle.resume
@@ -40,10 +52,14 @@ fun main() {
 class SkikoAppDelegate @OverrideInit constructor() : UIResponder(), UIApplicationDelegateProtocol {
     companion object : UIResponderMeta(), UIApplicationDelegateProtocolMeta
 
+    private val backDispatcher = BackDispatcher()
     private val lifecycle = LifecycleRegistry()
 
     private val root = DefaultRootComponent(
-        componentContext = DefaultComponentContext(lifecycle = lifecycle),
+        componentContext = DefaultComponentContext(
+            lifecycle = lifecycle,
+            backHandler = backDispatcher,
+        ),
     )
 
     private var _window: UIWindow? = null
@@ -59,7 +75,23 @@ class SkikoAppDelegate @OverrideInit constructor() : UIResponder(), UIApplicatio
         window = UIWindow(frame = UIScreen.mainScreen.bounds)
 
         window!!.rootViewController = ComposeUIViewController {
-            RootContent(component = root)
+            Column {
+                // To skip upper part of screen.
+                Box(modifier = Modifier.height(64.dp))
+
+                PredictiveBackGestureOverlay(
+                    backDispatcher = backDispatcher,
+                    backIcon = { progress, _ ->
+                        PredictiveBackGestureIcon(
+                            imageVector = Icons.Default.ArrowBack,
+                            progress = progress,
+                        )
+                    },
+                    modifier = Modifier.fillMaxSize(),
+                ) {
+                    RootContent(component = root)
+                }
+            }
         }
         window!!.makeKeyAndVisible()
         return true
